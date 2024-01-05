@@ -30,7 +30,7 @@ exim_relay_container_user_uid: 100
 exim_relay_container_user_gid: 101
 
 # The base container network. It will be auto-created by this role if it doesn't exist already.
-exim_relay_container_network: ""
+exim_relay_container_network: "{{ exim_relay_identifier }}"
 
 # A list of additional container networks that the container would be connected to.
 # The role does not create these networks, so make sure they already exist.
