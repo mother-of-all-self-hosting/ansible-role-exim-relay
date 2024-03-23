@@ -13,7 +13,7 @@ ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_s
 
 # --hostname gives us a friendlier hostname than the default.
 # The real hostname that gets used for delivery is passed to Exim via a `HOSTNAME` environment variable though.
-ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--rm \
 			--name={{ exim_relay_identifier }} \
 			--log-driver=none \
@@ -28,6 +28,12 @@ ExecStart={{ devture_systemd_docker_base_host_command_docker }} run \
 			{{ arg }} \
 			{% endfor %}
 			{{ exim_relay_container_image }}
+
+{% for network in exim_relay_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ exim_relay_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ exim_relay_identifier }}
 
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop --time={{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ exim_relay_identifier }} 2>/dev/null || true'
 ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ exim_relay_identifier }} 2>/dev/null || true'
