@@ -9,6 +9,7 @@
     group: "{{ exim_relay_gid }}"
   with_items:
     - {path: "{{ exim_relay_base_path }}", when: true}
+    - {path: "{{ exim_relay_spool_path }}", when: true}
     - {path: "{{ exim_relay_container_image_self_build_src_files_path }}", when: "{{ exim_relay_container_image_self_build }}"}
   when: item.when | bool
 

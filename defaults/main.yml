@@ -7,6 +7,7 @@ exim_relay_enabled: true
 exim_relay_identifier: exim-relay
 
 exim_relay_base_path: "/{{ exim_relay_identifier }}"
+exim_relay_spool_path: "{{ exim_relay_base_path }}/spool"
 
 # Also see `exim_relay_container_user_uid` and `exim_relay_container_user_gid` below
 exim_relay_uid: ''

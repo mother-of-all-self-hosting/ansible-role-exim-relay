@@ -20,7 +20,7 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--user={{ exim_relay_container_user_uid }}:{{ exim_relay_container_user_gid }} \
 			--cap-drop=ALL \
 			--read-only \
-			--tmpfs=/var/spool/exim:rw,noexec,nosuid,size=100m \
+			--mount type=bind,src={{ exim_relay_spool_path }},dst=/var/spool/exim \
 			--network={{ exim_relay_container_network }} \
 			--env-file={{ exim_relay_base_path }}/env \
 			--hostname={{ exim_relay_identifier }} \
