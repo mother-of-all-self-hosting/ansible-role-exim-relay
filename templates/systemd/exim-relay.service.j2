@@ -21,6 +21,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
 			--cap-drop=ALL \
 			--read-only \
 			--mount type=bind,src={{ exim_relay_spool_path }},dst=/var/spool/exim \
+			{% if exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool %}
+			--mount type=bind,src={{ exim_relay_dkim_privkey_path }},dst=/etc/exim/dkim.pem,readonly \
+			{% endif %}
 			--network={{ exim_relay_container_network }} \
 			--env-file={{ exim_relay_base_path }}/env \
 			--hostname={{ exim_relay_identifier }} \

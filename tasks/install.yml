@@ -19,6 +19,15 @@
     dest: "{{ exim_relay_base_path }}/env"
     mode: 0640
 
+- name: Ensure exim-relay DKIM private key file created
+  ansible.builtin.copy:
+    content: "{{ exim_relay_dkim_privkey_contents }}"
+    dest: "{{ exim_relay_dkim_privkey_path }}"
+    mode: 0640
+    owner: "{{ exim_relay_uid }}"
+    group: "{{ exim_relay_gid }}"
+  when: exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool
+
 - when: exim_relay_container_image_self_build | bool
   block:
     - name: Ensure exim-relay repository is present on self-build

@@ -43,6 +43,11 @@ exim_relay_container_extra_arguments: []
 
 exim_relay_hostname: ""
 
+# path to the file containing the DKIM private key
+exim_relay_dkim_privkey_path: "{{ exim_relay_base_path }}/dkim.private"
+# contents of the DKIM private key
+exim_relay_dkim_privkey_contents: ""
+
 exim_relay_sender_address: ""
 
 exim_relay_relay_use: false
