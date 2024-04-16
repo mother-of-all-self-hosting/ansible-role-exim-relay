@@ -31,8 +31,8 @@
     content: "{{ exim_relay_dkim_privkey_contents }}"
     dest: "{{ exim_relay_dkim_privkey_path }}"
     mode: 0640
-    owner: "{{ exim_relay_uid }}"
-    group: "{{ exim_relay_gid }}"
+    owner: "{{ exim_relay_container_user_uid }}"
+    group: "{{ exim_relay_container_user_gid }}"
   when: exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool
 
 - when: exim_relay_container_image_self_build | bool
