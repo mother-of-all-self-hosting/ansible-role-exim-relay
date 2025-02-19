@@ -7,18 +7,9 @@ SPDX-FileCopyrightText: 2024 - 2025 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Adjusting email-sending settings (optional)
+# Setting up exim-relay
 
-By default, this playbook sets up an [Exim](https://www.exim.org/) email server through which all Matrix services send emails.
-
-The email server would attempt to deliver emails directly to their final destination. This may or may not work, depending on your domain configuration (SPF settings, etc.)
-
-By default, emails are sent from `matrix@matrix.example.com`, as specified by the `exim_relay_sender_address` playbook variable.
-
-> [!WARNING]
-> On some cloud providers (Google Cloud, etc.), [port 25 is always blocked](https://cloud.google.com/compute/docs/tutorials/sending-mail/), so sending email directly from your server is not possible. You will need to [relay email through another SMTP server](#relaying-email-through-another-smtp-server).
-
-💡 To improve deliverability, we recommend [relaying email through another SMTP server](#relaying-email-through-another-smtp-server) anyway.
+This is an [Ansible](https://www.ansible.com/) role which installs the [Exim](https://www.exim.org/) mailer via [exim-relay](https://github.com/devture/exim-relay) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
 ## Prerequisites
 
@@ -26,9 +17,21 @@ To use exim-relay, make sure you have configured the firewall properly. You'll p
 
 ## Adjusting the playbook configuration
 
+To enable exim-relay with this role, add the following configuration to your `vars.yml` file.
+
+**Note**: the path should be something like `inventory/host_vars/matrix.example.com/vars.yml` if you use the [MDAD (matrix-docker-ansible-deploy)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook.
+
+```yaml
+exim_relay_enabled: true
+exim_relay_hostname: example.com
+exim_relay_sender_address: "example@{{ exim_relay_hostname }}"
+```
+
 ### Relaying email through another SMTP server
 
-If you'd like to relay email through another SMTP server, add the following configuration to your `inventory/host_vars/matrix.example.com/vars.yml` file (adapt to your needs):
+By default, exim-relay attempts to deliver emails directly. This may or may not work, depending on your domain configuration (SPF settings, etc.)
+
+**On some cloud providers such as Google Cloud, [port 25 is always blocked](https://cloud.google.com/compute/docs/tutorials/sending-mail/), so sending email directly from your server is not possible.** In this case, you will need to relay email through another SMTP server by adding the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
 exim_relay_sender_address: "another.sender@example.com"
@@ -67,4 +70,4 @@ exim_relay_relay_auth_password: "YOUR_API_KEY_PASSWORD_HERE"
 
 If you're having trouble with email not being delivered, it may be useful to inspect the mailer logs.
 
-To do so, log in to the server with SSH and run `journalctl -f -u matrix-exim-relay`.
+To do so, log in to the server with SSH and run `journalctl -fu exim-relay` (or how you/your playbook named the service, e.g. `matrix-exim-relay`).
