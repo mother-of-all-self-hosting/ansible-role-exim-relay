@@ -20,9 +20,9 @@ By default, emails are sent from `matrix@matrix.example.com`, as specified by th
 
 💡 To improve deliverability, we recommend [relaying email through another SMTP server](#relaying-email-through-another-smtp-server) anyway.
 
-## Firewall settings
+## Prerequisites
 
-No matter whether you send email directly (the default) or you relay email through another host (see how below), you'll probably need to allow outgoing traffic for TCP ports 25/587 (depending on configuration).
+To use exim-relay, make sure you have configured the firewall properly. You'll probably need to allow outgoing traffic for TCP ports 25/587 (depending on configuration) on your server if you have not.
 
 ## Adjusting the playbook configuration
 
