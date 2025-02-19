@@ -24,9 +24,21 @@ To enable exim-relay with this role, add the following configuration to your `va
 - If you use the MDAD (matrix-docker-ansible-deploy) playbook, these settings are not needed as they are specified by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
 ```yaml
+########################################################################
+#                                                                      #
+# exim_relay                                                           #
+#                                                                      #
+########################################################################
+
 exim_relay_enabled: true
 exim_relay_hostname: example.com
 exim_relay_sender_address: "example@{{ exim_relay_hostname }}"
+
+########################################################################
+#                                                                      #
+# /exim_relay                                                          #
+#                                                                      #
+########################################################################
 ```
 
 ### Relaying email through another SMTP server
