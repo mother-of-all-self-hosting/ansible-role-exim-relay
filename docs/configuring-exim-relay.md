@@ -45,7 +45,7 @@ exim_relay_relay_auth_password: "PASSWORD_FOR_THE_RELAY_HERE"
 
 **Note**: only the secure submission protocol (using `STARTTLS`, usually on port `587`) is supported. **SMTPS** (encrypted SMTP, usually on port `465`) **is not supported**.
 
-### Sending emails using Sendgrid
+#### Sending emails using Sendgrid
 
 An easy and free SMTP service to set up is [Sendgrid](https://sendgrid.com/). Its free tier allows for up to 100 emails per day to be sent.
 
