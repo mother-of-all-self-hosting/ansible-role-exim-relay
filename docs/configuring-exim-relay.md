@@ -19,7 +19,9 @@ To use exim-relay, make sure you have configured the firewall properly. You'll p
 
 To enable exim-relay with this role, add the following configuration to your `vars.yml` file.
 
-**Note**: the path should be something like `inventory/host_vars/matrix.example.com/vars.yml` if you use the [MDAD (matrix-docker-ansible-deploy)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook.
+**Notes**:
+- The path should be something like `inventory/host_vars/matrix.example.com/vars.yml` if you use the [MDAD (matrix-docker-ansible-deploy)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook.
+- If you use the MDAD Ansible playbook, these settings are not needed as they are specified by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
 ```yaml
 exim_relay_enabled: true
