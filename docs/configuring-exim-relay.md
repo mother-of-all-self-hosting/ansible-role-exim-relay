@@ -68,6 +68,16 @@ exim_relay_relay_auth_username: "apikey"
 exim_relay_relay_auth_password: "YOUR_API_KEY_PASSWORD_HERE"
 ```
 
+## Installing
+
+After configuring the playbook, run the installation command of your playbook as below:
+
+```sh
+ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,start
+```
+
+If you use the [mash-playbook](https://github.com/mother-of-all-self-hosting/mash-playbook) or MDAD Ansible playbook, the shortcut commands with the [`just` program](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/just.md) are also available: `just install-all` or `just setup-all`
+
 ## Troubleshooting
 
 If you're having trouble with email not being delivered, it may be useful to inspect the mailer logs.
