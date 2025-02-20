@@ -84,7 +84,7 @@ exim_relay_relay_auth_password: "YOUR_API_KEY_PASSWORD_HERE"
 
 Exim-relay supports DomainKeys Identified Mail (DKIM) as email authentication method.
 
-To enable it, at first you need to create a DKIM key pair, then add its **public key** to your domain's DNS record. Look for the internet for a guide about how to do so.
+To enable it, at first you need to create a DKIM key pair, then add its **public key** to your domain's DNS record. Look on the internet for a guide about how to do so.
 
 After that, add the following configuration to your `vars.yml` file. Make sure to replace `DKIM_PRIVATE_KEY_HERE` with your DKIM's **private key**.
 
