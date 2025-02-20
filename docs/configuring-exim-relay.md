@@ -92,7 +92,7 @@ After that, add the following configuration to your `vars.yml` file. Make sure t
 exim_relay_dkim_privkey_contents: "DKIM_PRIVATE_KEY_HERE"
 ```
 
-**Note**: DKIM support cannot be activated when it is enabled to relay email through another SMTP server with the configuration below.
+**Note**: DKIM support cannot be activated when it is enabled to relay email through another SMTP server.
 
 ## Installing
 
