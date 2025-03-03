@@ -74,3 +74,10 @@ exim_relay_relay_host_port: 587
 exim_relay_relay_auth: false
 exim_relay_relay_auth_username: ""
 exim_relay_relay_auth_password: ""
+
+# A list of IPv4/IPv6 subnets to allow relaying from.
+# By default, we whitelist some private address pools used by Docker.
+#
+# To allow relaying from everywhere, use a value of `["*"]`.
+# As long as exim is not exposed outside of the container network (which it isn't by default), allowing relaying from everywhere is also safe.
+exim_relay_relay_from_hosts: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"]
