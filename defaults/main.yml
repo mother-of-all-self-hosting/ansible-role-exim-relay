@@ -18,16 +18,18 @@ exim_relay_spool_path: "{{ exim_relay_base_path }}/spool"
 exim_relay_uid: ''
 exim_relay_gid: ''
 
-# renovate: datasource=docker depName=devture/exim-relay versioning=semver
-exim_relay_version: 4.98-r0-4
+# renovate: datasource=docker depName=ghcr.io/devture/exim-relay versioning=semver
+exim_relay_version: 4.98.1-r0-2
 
 exim_relay_container_image_self_build: false
 exim_relay_container_image_self_build_repository_url: "https://github.com/devture/exim-relay"
 exim_relay_container_image_self_build_src_files_path: "{{ exim_relay_base_path }}/docker-src"
 exim_relay_container_image_self_build_version: "{{ exim_relay_container_image.split(':')[1] }}"
 
-exim_relay_container_image: "{{ exim_relay_container_image_name_prefix }}devture/exim-relay:{{ exim_relay_version }}"
-exim_relay_container_image_name_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else 'docker.io/' }}"
+exim_relay_container_image: "{{ exim_relay_container_image_registry_prefix }}devture/exim-relay:{{ exim_relay_version }}"
+exim_relay_container_image_registry_prefix: "{{ 'localhost/' if exim_relay_container_image_self_build else exim_relay_container_image_registry_prefix_upstream }}"
+exim_relay_container_image_registry_prefix_upstream: "{{ exim_relay_container_image_registry_prefix_upstream_default }}"
+exim_relay_container_image_registry_prefix_upstream_default: "ghcr.io/"
 exim_relay_container_image_force_pull: "{{ exim_relay_container_image.endswith(':latest') }}"
 
 # The user/group that the container runs with.
@@ -47,6 +49,9 @@ exim_relay_container_additional_networks_custom: []
 
 # A list of extra arguments to pass to the container
 exim_relay_container_extra_arguments: []
+
+# Additional environment variables.
+exim_relay_environment_variables_additional_variables: ''
 
 # List of systemd services that the systemd service depends on
 exim_relay_systemd_required_services_list: "{{ exim_relay_systemd_required_services_list_default + exim_relay_systemd_required_services_list_auto + exim_relay_systemd_required_services_list_custom }}"
@@ -72,3 +77,13 @@ exim_relay_relay_host_port: 587
 exim_relay_relay_auth: false
 exim_relay_relay_auth_username: ""
 exim_relay_relay_auth_password: ""
+
+# A list of IPv4/IPv6 subnets to allow relaying from.
+# By default, we whitelist some private address pools used by Docker.
+#
+# To allow relaying from everywhere, use a value of `["*"]`.
+# As long as exim is not exposed outside of the container network (which it isn't by default), allowing relaying from everywhere is also safe.
+exim_relay_relay_from_hosts: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7"]
+
+# Controls the `DKIM_SELECTOR` environment variable, which specifies which DKIM selector is to be used.
+exim_relay_dkim_selector: default
