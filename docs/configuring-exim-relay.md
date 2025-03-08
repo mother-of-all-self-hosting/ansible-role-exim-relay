@@ -132,4 +132,4 @@ If you use the MASH or MDAD Ansible playbook, the shortcut commands with the [`j
 
 If you're having trouble with email not being delivered, it may be useful to inspect the mailer logs.
 
-To do so, log in to the server with SSH and run `journalctl -fu exim-relay` (or how you/your playbook named the service, e.g. `matrix-exim-relay`).
+To do so, log in to the server with SSH and run `journalctl -fu exim-relay` (or how you/your playbook named the service, e.g. `mash-exim-relay`, `matrix-exim-relay`).
