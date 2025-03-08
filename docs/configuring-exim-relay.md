@@ -21,7 +21,7 @@ To enable exim-relay with this role, add the following configuration to your `va
 
 **Notes**:
 - The path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [MASH (Mother-of-All-Self-Hosting)](https://github.com/mother-of-all-self-hosting/mash-playbook) Ansible playbook.
-- If you use the MDAD (matrix-docker-ansible-deploy) playbook, these settings are not needed as they are specified by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
+- If you use the MDAD (matrix-docker-ansible-deploy) playbook, you do not need to enable exim-relay as it is enabled by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
 ```yaml
 ########################################################################
@@ -41,9 +41,33 @@ exim_relay_sender_address: "example@{{ exim_relay_hostname }}"
 ########################################################################
 ```
 
-### Relaying email through another SMTP server
+### Enable DKIM support (optional)
 
-By default, exim-relay attempts to deliver emails directly. This may or may not work, depending on your domain configuration (SPF settings, etc.)
+By default, exim-relay attempts to deliver emails directly. This may or may not work, depending on your domain configuration.
+
+To improve email deliverability, you can set up *DomainKeys Identified Mail (DKIM)* authentication method, along with SPF and DMARC. Without setting either of them, your outgoing email is most likely to be quarantined as spam.
+
+Exim-relay supports DKIM. With DKIM enabled, exim-relay adds cryptographically signed digital signatures to outgoing emails' headers using the sender's private key.
+
+To enable DKIM support, at first you need to create a DKIM key pair. You can use DKIM with RSA signatures and Ed25519 elliptic curve signatures. For details about setting Ed25519 signatures (its cheacteristics and how to create Ed25519 key pair, etc.), you can refer an article such as [this one](https://www.mailhardener.com/kb/how-to-use-dkim-with-ed25519).
+
+After creating a key pair, add its **public key** to your domain's DKIM DNS record. Look on the internet for a guide about how to do so. Note that every DKIM record must have a unique identifier called as "selector". If you set `eximrelay` as a selector, your DKIM record's DNS name would be `eximrelay._domainkey.example.com`.
+
+Then, add your DKIM's **private key** by adding the following configuration to your `vars.yml` file. Running the installation command of your playbook will create a private key file with it (`dkim.private` by default) on your server, which exim-relay will use to sign outgoing emails.
+
+```yaml
+exim_relay_dkim_privkey_contents:  |
+  -----BEGIN PRIVATE KEY-----
+  …
+  -----END PRIVATE KEY-----
+```
+
+**Note**: the whole key (all of its belonging lines) under the variable needs to be indented with 2 spaces.
+
+> [!WARNING]
+> DKIM support cannot be activated when it is enabled to relay email through another SMTP server.
+
+### Relaying email through another SMTP server (optional)
 
 **On some cloud providers such as Google Cloud, [port 25 is always blocked](https://cloud.google.com/compute/docs/tutorials/sending-mail/), so sending email directly from your server is not possible.** In this case, you will need to relay email through another SMTP server by adding the following configuration to your `vars.yml` file (adapt to your needs):
 
@@ -79,21 +103,6 @@ exim_relay_relay_auth_username: "apikey"
 # The password looks something like `SG.955oW1mLSfwds7i9Yd6IA5Q.q8GTaB8q9kGDzasegdG6u95fQ-6zkdwrPP8bOeuI`.
 exim_relay_relay_auth_password: "YOUR_API_KEY_PASSWORD_HERE"
 ```
-
-### Enable DKIM support (optional)
-
-Exim-relay supports DomainKeys Identified Mail (DKIM) as email authentication method.
-
-To enable it, at first you need to create a DKIM key pair, then add its **public key** to your domain's DNS record. Look on the internet for a guide about how to do so.
-
-After that, add the following configuration to your `vars.yml` file. Make sure to replace `DKIM_PRIVATE_KEY_HERE` with your DKIM's **private key**.
-
-```yaml
-exim_relay_dkim_privkey_contents: "DKIM_PRIVATE_KEY_HERE"
-```
-
-> [!WARNING]
-> DKIM support cannot be activated when it is enabled to [relay email through another SMTP server](#relaying-email-through-another-smtp-server).
 
 ## Installing
 
