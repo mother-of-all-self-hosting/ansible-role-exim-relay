@@ -45,9 +45,9 @@ exim_relay_sender_address: "example@{{ exim_relay_hostname }}"
 
 By default, exim-relay attempts to deliver emails directly. This may or may not work, depending on your domain configuration.
 
-To improve email deliverability, you can set up *DomainKeys Identified Mail (DKIM)* authentication method, along with SPF and DMARC. Without setting either of them, your outgoing email is most likely to be quarantined as spam at recipient's mail servers.
+To improve email deliverability, you can configure authentication methods such as DKIM (DomainKeys Identified Mail), SPF, and DMARC for your domain. Without setting any authentication methods, your outgoing email is most likely to be quarantined as spam at recipient's mail servers.
 
-Exim-relay supports DKIM. With DKIM enabled, exim-relay adds cryptographically signed digital signatures to outgoing emails' headers using the sender's private key.
+DKIM support on exim-relay is not enabled by default. If enabled, it adds cryptographically signed digital signatures to outgoing emails' headers using your private key.
 
 To enable DKIM support, at first you need to create a DKIM key pair. You can use DKIM with RSA signatures and Ed25519 elliptic curve signatures. For details about enabling Ed25519 signatures (characteristics, how to create an Ed25519 key pair, etc.), you can refer an article such as [this one](https://www.mailhardener.com/kb/how-to-use-dkim-with-ed25519).
 
