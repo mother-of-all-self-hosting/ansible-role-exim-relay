@@ -60,10 +60,10 @@ Note that every DKIM record must have a unique identifier called as "selector". 
 You can edit the selector by adding the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-exim_relay_dkim_selector: exampleselector
+exim_relay_dkim_selector: example-selector
 ```
 
-With this configuration, your DKIM record's DNS name would be `exampleselector._domainkey.example.com`.
+With this configuration, your DKIM record's DNS name would be `example-selector._domainkey.example.com`.
 
 #### Add the private key
 
