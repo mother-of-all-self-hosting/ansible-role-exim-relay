@@ -45,18 +45,32 @@ exim_relay_sender_address: "example@{{ exim_relay_hostname }}"
 
 By default, exim-relay attempts to deliver emails directly. This may or may not work, depending on your domain configuration.
 
-To improve email deliverability, you can set up *DomainKeys Identified Mail (DKIM)* authentication method, along with SPF and DMARC. Without setting either of them, your outgoing email is most likely to be quarantined as spam.
+To improve email deliverability, you can set up *DomainKeys Identified Mail (DKIM)* authentication method, along with SPF and DMARC. Without setting either of them, your outgoing email is most likely to be quarantined as spam at recipient's mail servers.
 
 Exim-relay supports DKIM. With DKIM enabled, exim-relay adds cryptographically signed digital signatures to outgoing emails' headers using the sender's private key.
 
-To enable DKIM support, at first you need to create a DKIM key pair. You can use DKIM with RSA signatures and Ed25519 elliptic curve signatures. For details about setting Ed25519 signatures (its cheacteristics and how to create Ed25519 key pair, etc.), you can refer an article such as [this one](https://www.mailhardener.com/kb/how-to-use-dkim-with-ed25519).
+To enable DKIM support, at first you need to create a DKIM key pair. You can use DKIM with RSA signatures and Ed25519 elliptic curve signatures. For details about enabling Ed25519 signatures (characteristics, how to create an Ed25519 key pair, etc.), you can refer an article such as [this one](https://www.mailhardener.com/kb/how-to-use-dkim-with-ed25519).
 
-After creating a key pair, add its **public key** to your domain's DKIM DNS record. Look on the internet for a guide about how to do so. Note that every DKIM record must have a unique identifier called as "selector". If you set `eximrelay` as a selector, your DKIM record's DNS name would be `eximrelay._domainkey.example.com`.
+#### Add the public key
+
+After creating a key pair, add its **public key** to your domain's DKIM DNS record. Look on the internet for a guide about how to do so.
+
+Note that every DKIM record must have a unique identifier called as "selector". On exim-relay the default value is set to `default`, and your DKIM record's DNS name will be `default._domainkey.example.com`.
+
+You can edit the selector by adding the following configuration to your `vars.yml` file (adapt to your needs):
+
+```yaml
+exim_relay_dkim_selector: exampleselector
+```
+
+With this configuration, your DKIM record's DNS name would be `exampleselector._domainkey.example.com`.
+
+#### Add the private key
 
 Then, add your DKIM's **private key** by adding the following configuration to your `vars.yml` file. Running the installation command of your playbook will create a private key file with it (`dkim.private` by default) on your server, which exim-relay will use to sign outgoing emails.
 
 ```yaml
-exim_relay_dkim_privkey_contents:  |
+exim_relay_dkim_privkey_contents: |
   -----BEGIN PRIVATE KEY-----
   …
   -----END PRIVATE KEY-----
