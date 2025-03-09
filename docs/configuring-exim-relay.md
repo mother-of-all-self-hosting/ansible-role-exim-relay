@@ -20,8 +20,8 @@ To use exim-relay, make sure you have configured the firewall properly. You'll p
 To enable exim-relay with this role, add the following configuration to your `vars.yml` file.
 
 **Notes**:
-- The path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [MASH (Mother-of-All-Self-Hosting)](https://github.com/mother-of-all-self-hosting/mash-playbook) Ansible playbook.
-- If you use the MDAD (matrix-docker-ansible-deploy) playbook, you do not need to enable exim-relay as it is enabled by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
+- The path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [Mother-of-All-Self-Hosting (MASH)](https://github.com/mother-of-all-self-hosting/mash-playbook) Ansible playbook.
+- If you use the [matrix-docker-ansible-deploy (MDAD)](https://github.com/spantaleev/matrix-docker-ansible-deploy) Ansible playbook, you do not need to enable exim-relay as it is enabled by default. See its [`matrix_servers`](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/group_vars/matrix_servers) for details.
 
 ```yaml
 ########################################################################
@@ -126,7 +126,7 @@ After configuring the playbook, run the installation command of your playbook as
 ansible-playbook -i inventory/hosts setup.yml --tags=setup-all,start
 ```
 
-If you use the MASH or MDAD Ansible playbook, the shortcut commands with the [`just` program](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/just.md) are also available: `just install-all` or `just setup-all`
+If you use the MASH / MDAD Ansible playbook, the shortcut commands with the [`just` program](https://github.com/spantaleev/matrix-docker-ansible-deploy/blob/master/docs/just.md) are also available: `just install-all` or `just setup-all`
 
 ## Troubleshooting
 
