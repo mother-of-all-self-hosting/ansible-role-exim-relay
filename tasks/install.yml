@@ -43,31 +43,6 @@
   when: exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool
   register: exim_relay_dkim_result
 
-- name: Run if self-building of exim-relay container image is enabled
-  when: "exim_relay_container_image_self_build | bool"
-  block:
-    - name: Ensure exim-relay repository is present on self-build
-      ansible.builtin.git:
-        repo: "{{ exim_relay_container_image_self_build_repo }}"
-        version: "{{ exim_relay_container_image_self_build_repo_version }}"
-        dest: "{{ exim_relay_container_image_self_build_src_files_path }}"
-        force: "yes"
-      become: true
-      become_user: "{{ exim_relay_uid }}"
-      register: exim_relay_git_pull_results
-
-    - name: Ensure exim-relay container image is built
-      community.docker.docker_image:
-        name: "{{ exim_relay_container_image }}"
-        source: build
-        force_source: "{{ exim_relay_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else exim_relay_git_pull_results.changed }}"
-        build:
-          dockerfile: Dockerfile
-          path: "{{ exim_relay_container_image_self_build_src_files_path }}"
-          pull: true
-      register: exim_relay_container_image_build_result
-
 - name: Run if self-building of exim-relay container image is not enabled
   when: "not exim_relay_container_image_self_build | bool"
   block:
@@ -92,6 +67,31 @@
       delay: "{{ devture_playbook_help_container_retries_delay }}"
       until: exim_relay_container_image_pull_result is not failed
       changed_when: "'Downloaded newer image' in exim_relay_container_image_pull_result.stdout"
+
+- name: Run if self-building of exim-relay container image is enabled
+  when: "exim_relay_container_image_self_build | bool"
+  block:
+    - name: Ensure exim-relay repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ exim_relay_container_image_self_build_repo }}"
+        version: "{{ exim_relay_container_image_self_build_repo_version }}"
+        dest: "{{ exim_relay_container_image_self_build_src_files_path }}"
+        force: "yes"
+      become: true
+      become_user: "{{ exim_relay_uid }}"
+      register: exim_relay_git_pull_results
+
+    - name: Ensure exim-relay container image is built
+      community.docker.docker_image:
+        name: "{{ exim_relay_container_image }}"
+        source: build
+        force_source: "{{ exim_relay_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else exim_relay_git_pull_results.changed }}"
+        build:
+          dockerfile: Dockerfile
+          path: "{{ exim_relay_container_image_self_build_src_files_path }}"
+          pull: true
+      register: exim_relay_container_image_build_result
 
 - name: Ensure exim-relay container network is created
   community.general.docker_network:
