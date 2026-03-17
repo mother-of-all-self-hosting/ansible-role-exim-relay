@@ -98,27 +98,6 @@ exim_relay_relay_auth_password: "PASSWORD_FOR_THE_RELAY_HERE"
 
 **Note**: only the secure submission protocol (using `STARTTLS`, usually on port `587`) is supported. **SMTPS** (encrypted SMTP, usually on port `465`) **is not supported**.
 
-#### Sending emails using Sendgrid
-
-An easy and free SMTP service to set up is [Sendgrid](https://sendgrid.com/). Its free tier allows for up to 100 emails per day to be sent.
-
-To set it up, add the following configuration to your `vars.yml` file (adapt to your needs):
-
-```yaml
-exim_relay_sender_address: "example@example.org"
-exim_relay_relay_use: true
-exim_relay_relay_host_name: "smtp.sendgrid.net"
-exim_relay_relay_host_port: 587
-exim_relay_relay_auth: true
-
-# This needs to be literally the string "apikey". It is always the same for Sendgrid.
-exim_relay_relay_auth_username: "apikey"
-
-# You can generate the API key password at this URL: https://app.sendgrid.com/settings/api_keys
-# The password looks something like `SG.955oW1mLSfwds7i9Yd6IA5Q.q8GTaB8q9kGDzasegdG6u95fQ-6zkdwrPP8bOeuI`.
-exim_relay_relay_auth_password: "YOUR_API_KEY_PASSWORD_HERE"
-```
-
 ## Installing
 
 After configuring the playbook, run the installation command of your playbook as below:
