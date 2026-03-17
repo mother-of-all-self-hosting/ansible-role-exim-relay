@@ -9,7 +9,8 @@
     path: "{{ devture_systemd_docker_base_systemd_path }}/{{ exim_relay_identifier }}.service"
   register: exim_relay_service_stat
 
-- when: exim_relay_service_stat.stat.exists | bool
+- name: Uninstall exim-relay systemd services and files
+  when: exim_relay_service_stat.stat.exists | bool
   block:
     - name: Ensure exim-relay is stopped
       ansible.builtin.service:
