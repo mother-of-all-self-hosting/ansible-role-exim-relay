@@ -5,7 +5,7 @@
 
 ---
 
-- name: Ensure exim-relay base path exists
+- name: Ensure exim-relay paths exist
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
@@ -66,7 +66,7 @@
           path: "{{ exim_relay_container_image_self_build_src_files_path }}"
           pull: true
 
-- name: Ensure exim-relay image is pulled
+- name: Ensure exim-relay container image is pulled
   community.docker.docker_image:
     name: "{{ exim_relay_container_image }}"
     source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
@@ -85,7 +85,7 @@
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
 
-- name: Ensure exim-relay.service installed
+- name: Ensure exim-relay systemd service is present
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/exim-relay.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ exim_relay_identifier }}.service"
