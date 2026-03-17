@@ -43,19 +43,20 @@
   when: exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool
   register: exim_relay_dkim_result
 
-- when: exim_relay_container_image_self_build | bool
+- name: Run if self-building of exim-relay container image is enabled
+  when: "exim_relay_container_image_self_build | bool"
   block:
     - name: Ensure exim-relay repository is present on self-build
       ansible.builtin.git:
-        repo: "{{ exim_relay_container_image_self_build_repository_url }}"
+        repo: "{{ exim_relay_container_image_self_build_repo }}"
+        version: "{{ exim_relay_container_image_self_build_repo_version }}"
         dest: "{{ exim_relay_container_image_self_build_src_files_path }}"
-        version: "{{ exim_relay_container_image_self_build_version }}"
         force: "yes"
       become: true
       become_user: "{{ exim_relay_uid }}"
       register: exim_relay_git_pull_results
 
-    - name: Ensure exim-relay Docker image is built
+    - name: Ensure exim-relay container image is built
       community.docker.docker_image:
         name: "{{ exim_relay_container_image }}"
         source: build
@@ -65,6 +66,7 @@
           dockerfile: Dockerfile
           path: "{{ exim_relay_container_image_self_build_src_files_path }}"
           pull: true
+      register: exim_relay_container_image_build_result
 
 - name: Ensure exim-relay container image is pulled
   community.docker.docker_image:
@@ -100,4 +102,5 @@
         or exim_relay_dkim_result.changed | default(false)
         or exim_relay_systemd_service_result.changed | default(false)
         or exim_relay_container_image_pull_result.changed | default(false)
+        or exim_relay_container_image_build_result.changed | default(false)
       }}
