@@ -68,17 +68,20 @@
           pull: true
       register: exim_relay_container_image_build_result
 
-- name: Ensure exim-relay container image is pulled
-  community.docker.docker_image:
-    name: "{{ exim_relay_container_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ exim_relay_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else exim_relay_container_image_force_pull }}"
+- name: Run if self-building of exim-relay container image is not enabled
   when: "not exim_relay_container_image_self_build | bool"
-  register: exim_relay_container_image_pull_result
-  retries: "{{ devture_playbook_help_container_retries_count }}"
-  delay: "{{ devture_playbook_help_container_retries_delay }}"
-  until: exim_relay_container_image_pull_result is not failed
+  block:
+    - name: Ensure exim-relay container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ exim_relay_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ exim_relay_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else exim_relay_container_image_force_pull }}"
+      register: exim_relay_container_image_pull_result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: exim_relay_container_image_pull_result is not failed
 
 - name: Ensure exim-relay container network is created
   community.general.docker_network:
