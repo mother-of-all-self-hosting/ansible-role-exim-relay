@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: (Deprecation) Catch and report renamed exim-relay variables
   ansible.builtin.fail:
     msg: >-
@@ -12,7 +11,7 @@
   with_items:
     - { "old": "exim_relay_container_image_self_build_repository_url", "new": "exim_relay_container_image_self_build_repo" }
     - { "old": "exim_relay_container_image_self_build_version", "new": "exim_relay_container_image_self_build_repo_version" }
-    - {'old': 'exim_relay_container_image_name_prefix', 'new': 'exim_relay_container_image_registry_prefix'}
+    - { "old": "exim_relay_container_image_name_prefix", "new": "exim_relay_container_image_registry_prefix" }
 
 - name: Fail if required exim-relay settings not defined
   ansible.builtin.fail:
@@ -20,8 +19,8 @@
       You need to define a required configuration setting (`{{ item.name }}`).
   when: "item.when | bool and lookup('vars', item.name, default='') | string | length == 0"
   with_items:
-    - {'name': 'exim_relay_uid', when: true}
-    - {'name': 'exim_relay_gid', when: true}
-    - {'name': 'exim_relay_hostname', when: true}
-    - {'name': 'exim_relay_sender_address', when: true}
-    - {'name': 'exim_relay_container_network', when: true}
+    - { "name": "exim_relay_uid", when: true }
+    - { "name": "exim_relay_gid", when: true }
+    - { "name": "exim_relay_hostname", when: true }
+    - { "name": "exim_relay_sender_address", when: true }
+    - { "name": "exim_relay_container_network", when: true }

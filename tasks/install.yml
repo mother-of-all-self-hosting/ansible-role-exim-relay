@@ -4,24 +4,23 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-
 - name: Ensure exim-relay paths exist
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ exim_relay_uid }}"
     group: "{{ exim_relay_gid }}"
   with_items:
-    - {path: "{{ exim_relay_base_path }}", when: true}
-    - {path: "{{ exim_relay_container_image_self_build_src_files_path }}", when: "{{ exim_relay_container_image_self_build }}"}
+    - { path: "{{ exim_relay_base_path }}", when: true }
+    - { path: "{{ exim_relay_container_image_self_build_src_files_path }}", when: "{{ exim_relay_container_image_self_build }}" }
   when: item.when | bool
 
 - name: Ensure exim-relay spool path exists
   ansible.builtin.file:
     path: "{{ exim_relay_spool_path }}"
     state: directory
-    mode: 0750
+    mode: "0750"
     owner: "{{ exim_relay_container_user_uid }}"
     group: "{{ exim_relay_container_user_gid }}"
     recurse: true
@@ -30,14 +29,14 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/env.j2"
     dest: "{{ exim_relay_base_path }}/env"
-    mode: 0640
+    mode: "0640"
   register: exim_relay_config_result
 
 - name: Ensure exim-relay DKIM private key file created
   ansible.builtin.copy:
     content: "{{ exim_relay_dkim_privkey_contents }}"
     dest: "{{ exim_relay_dkim_privkey_path }}"
-    mode: 0640
+    mode: "0640"
     owner: "{{ exim_relay_container_user_uid }}"
     group: "{{ exim_relay_container_user_gid }}"
   when: exim_relay_dkim_privkey_contents != "" and not exim_relay_relay_use|bool
@@ -118,7 +117,7 @@
   ansible.builtin.template:
     src: "{{ role_path }}/templates/systemd/exim-relay.service.j2"
     dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ exim_relay_identifier }}.service"
-    mode: 0644
+    mode: "0644"
   register: exim_relay_systemd_service_result
 
 - name: Determine whether exim-relay needs a restart
