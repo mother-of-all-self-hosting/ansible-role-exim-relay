@@ -96,7 +96,24 @@ exim_relay_relay_auth_username: "another.sender@example.com"
 exim_relay_relay_auth_password: "PASSWORD_FOR_THE_RELAY_HERE"
 ```
 
-**Note**: only the secure submission protocol (using `STARTTLS`, usually on port `587`) is supported. **SMTPS** (encrypted SMTP, usually on port `465`) **is not supported**.
+By default, STARTTLS on port 587 is used. To use implicit TLS (SMTPS) on port 465 instead, see [the section below](#using-smtps-implicit-tls-on-port-465).
+
+### Using SMTPS (implicit TLS on port 465)
+
+Some providers require implicit TLS ([RFC 8314](https://www.rfc-editor.org/rfc/rfc8314)) instead of STARTTLS. Set `exim_relay_relay_protocol` to `smtps` — the port defaults to `465` automatically:
+
+```yaml
+exim_relay_sender_address: "another.sender@example.com"
+exim_relay_relay_use: true
+exim_relay_relay_host_name: "mail.example.com"
+exim_relay_relay_protocol: "smtps"
+exim_relay_relay_auth: true
+exim_relay_relay_auth_username: "another.sender@example.com"
+exim_relay_relay_auth_password: "PASSWORD_FOR_THE_RELAY_HERE"
+```
+
+> [!NOTE]
+> Port 465 is set automatically when `exim_relay_relay_protocol: "smtps"` is used. You can still override `exim_relay_relay_host_port` explicitly if your provider uses a non-standard port.
 
 ## Installing
 
