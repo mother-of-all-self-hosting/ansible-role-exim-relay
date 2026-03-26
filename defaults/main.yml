@@ -111,11 +111,7 @@ exim_relay_dkim_privkey_contents: ""
 
 exim_relay_relay_use: false
 exim_relay_relay_host_name: "mail.example.com"
-# Supported values: "smtp" (STARTTLS, default) or "smtps" (implicit TLS on port 465, RFC 8314)
-exim_relay_relay_protocol: "smtp"
-# When using "smtps", port 465 is set automatically; 587 is the default for "smtp".
-# You can override this explicitly if your provider uses a non-standard port.
-exim_relay_relay_host_port: "{{ '465' if exim_relay_relay_protocol == 'smtps' else '587' }}"
+exim_relay_relay_host_port: 587
 exim_relay_relay_auth: false
 exim_relay_relay_auth_username: ""
 exim_relay_relay_auth_password: ""
