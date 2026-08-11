@@ -34,7 +34,7 @@ provisioner:
         # Variables for exim-relay
         exim_relay_uid: 100
         exim_relay_gid: 101
-        exim_relay_hostname: locahost
+        exim_relay_hostname: localhost
         exim_relay_sender_address: example@localhost
   env:
     # Workaround for https://github.com/ansible/molecule/issues/4391
