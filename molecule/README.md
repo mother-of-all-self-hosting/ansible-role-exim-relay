@@ -49,6 +49,8 @@ Currently there is one testing scenario available.
 
 Tests a standard exim-relay installation.
 
+Beyond checking that the systemd service comes up, the verification holds a real ESMTP conversation with the container over its own container network, from a throwaway container running the same image. It asserts that Exim greets with the version the role installs, answers `EHLO` with the expected ESMTP capabilities, accepts an envelope sender, and relays for the container network. Nothing is ever delivered — the session is closed before `DATA`.
+
 ## Running
 
 By default it is configured to run the scenarios on Ubuntu 26.04.
