@@ -85,7 +85,7 @@
         exim_relay_expected_banner: "220 {{ exim_relay_identifier }} ESMTP Exim {{ exim_relay_expected_version }} "
       ansible.builtin.assert:
         that: exim_relay_smtp_conversation.stdout_lines[0] is match('^' ~ (exim_relay_expected_banner | regex_escape))
-        fail_msg: "Expected a banner starting with '{{ exim_relay_expected_banner }}', got '{{ exim_relay_smtp_conversation.stdout_lines[0] | default('nothing') }}'"
+        fail_msg: "Expected a banner starting with '{{ exim_relay_expected_banner }}', got '{{ exim_relay_smtp_conversation.stdout_lines[0] | default('none') }}'"
         success_msg: "exim-relay greeted with Exim {{ exim_relay_expected_version }}"
 
     - name: Assert exim-relay answers EHLO with the expected ESMTP capabilities
