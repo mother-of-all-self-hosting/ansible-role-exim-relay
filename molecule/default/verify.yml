@@ -112,9 +112,9 @@
         fail_msg: "exim-relay did not accept the envelope sender, or refused to relay for the container network"
         success_msg: "exim-relay accepted the envelope sender and relays for the container network"
 
-    - name: Show exim-relay verification summary
+    - name: Show the exim-relay verification summary
       ansible.builtin.debug:
         msg:
           - "exim-relay systemd: {{ exim_relay_service.status.ActiveState }}"
-          - "SMTP banner: {{ exim_relay_smtp_conversation.stdout_lines[0] }}"
-          - "SMTP session lines: {{ exim_relay_smtp_conversation.stdout_lines | length }}"
+          - "exim-relay SMTP banner: {{ exim_relay_smtp_conversation.stdout_lines[0] }}"
+          - "exim-relay SMTP session lines: {{ exim_relay_smtp_conversation.stdout_lines | length }}"
