@@ -24,21 +24,27 @@
       ansible.builtin.include_vars:
         file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
 
-    - name: Wait for exim-relay service to become active (up to 180s)
-      ansible.builtin.systemd:
+    - name: Wait for the exim-relay systemd service to become active (up to 180s)
+      ansible.builtin.systemd_service:
         name: exim-relay.service
       register: exim_relay_service
       until: exim_relay_service.status.ActiveState == 'active'
       retries: 36
       delay: 5
+      # So that giving up is reported by the assertion below rather than as a
+      # wall of systemd unit properties.
+      failed_when: false
 
-    - name: Assert exim-relay service is active
+    # `Restart=always` in the systemd unit means that even a container which crashes
+    # and gets restarted reads as active here, so this is a precondition rather than
+    # a result.
+    - name: Assert the exim-relay systemd service is active
       ansible.builtin.assert:
         that: exim_relay_service.status.ActiveState == 'active'
-        fail_msg: "exim-relay.service not active ({{ exim_relay_service.status.ActiveState }})"
+        fail_msg: "exim-relay.service is not active ({{ exim_relay_service.status.ActiveState }})"
         success_msg: "exim-relay.service is active"
 
-    - name: Retrieve exim-relay service log for debugging
+    - name: Retrieve the exim-relay systemd service log for debugging
       when: exim_relay_debug_service_enabled | bool
       ansible.builtin.command:
         cmd: journalctl -xeu exim-relay.service
