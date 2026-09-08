@@ -47,7 +47,7 @@
     - name: Retrieve the exim-relay systemd service log for debugging
       when: exim_relay_debug_service_enabled | bool
       ansible.builtin.command:
-        cmd: journalctl -xeu exim-relay.service
+        cmd: journalctl --no-pager --output=cat --unit=exim-relay.service
       changed_when: false
 
     # A real ESMTP conversation, held from a throwaway container attached to
