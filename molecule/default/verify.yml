@@ -10,6 +10,8 @@
   become: true
   gather_facts: false
   tasks:
+    - name: Verify that exim-relay works
+      block:
     # The probe below talks to the container by name on its own container
     # network and needs to know which image and which version the role just
     # installed. Reading the role defaults keeps the probe following whatever
@@ -124,3 +126,19 @@
           - "exim-relay systemd: {{ exim_relay_service.status.ActiveState }}"
           - "exim-relay SMTP banner: {{ exim_relay_smtp_conversation.stdout_lines[0] }}"
           - "exim-relay SMTP session lines: {{ exim_relay_smtp_conversation.stdout_lines | length }}"
+
+      rescue:
+        # Whatever went wrong, the reason is almost always in the systemd service log.
+        - name: Retrieve the exim-relay systemd service log
+          ansible.builtin.command:
+            cmd: journalctl --no-pager --output=cat --unit=exim-relay.service
+          register: exim_relay_service_log
+          changed_when: false
+
+        - name: Show the exim-relay systemd service log
+          ansible.builtin.debug:
+            var: exim_relay_service_log.stdout_lines
+
+        - name: Fail because verification did not pass
+          ansible.builtin.fail:
+            msg: "exim-relay verification failed. The systemd service log is printed above."
