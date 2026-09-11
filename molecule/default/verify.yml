@@ -9,6 +9,11 @@
   hosts: all
   become: true
   gather_facts: false
+
+  vars:
+    exim_relay_verify_units:
+      - exim-relay.service
+
   tasks:
     - name: Verify that exim-relay works
       block:
@@ -26,13 +31,14 @@
           ansible.builtin.include_vars:
             file: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/main.yml"
 
-        - name: Wait for the exim-relay systemd service to become active (up to 180s)
+        - name: Wait for the exim-relay systemd services to become active (up to 180s each)
           ansible.builtin.systemd_service:
-            name: exim-relay.service
-          register: exim_relay_service
-          until: exim_relay_service.status.ActiveState == 'active'
+            name: "{{ item }}"
+          register: exim_relay_services
+          until: exim_relay_services.status.ActiveState == 'active'
           retries: 36
           delay: 5
+          loop: "{{ exim_relay_verify_units }}"
           # So that giving up is reported by the assertion below rather than as a
           # wall of systemd unit properties.
           failed_when: false
@@ -40,17 +46,20 @@
         # `Restart=always` in the systemd unit means that even a container which crashes
         # and gets restarted reads as active here, so this is a precondition rather than
         # a result.
-        - name: Assert the exim-relay systemd service is active
+        - name: Assert the exim-relay systemd services are active
           ansible.builtin.assert:
-            that: exim_relay_service.status.ActiveState == 'active'
-            fail_msg: "exim-relay.service is not active ({{ exim_relay_service.status.ActiveState }})"
-            success_msg: "exim-relay.service is active"
+            that: exim_relay_services.results | map(attribute='status.ActiveState') | unique | list == ['active']
+            fail_msg: >-
+              Not every service is active:
+              {{ dict(exim_relay_verify_units | zip(exim_relay_services.results | map(attribute='status.ActiveState'))) }}
+            success_msg: "Every systemd service is active"
 
-        - name: Retrieve the exim-relay systemd service log for debugging
+        - name: Retrieve the exim-relay systemd services log for debugging
           when: exim_relay_debug_service_enabled | bool
           ansible.builtin.command:
-            cmd: journalctl --no-pager --output=cat --unit=exim-relay.service
+            cmd: "journalctl --no-pager --output=cat --unit={{ item }}"
           changed_when: false
+          loop: "{{ exim_relay_verify_units }}"
 
         # A real ESMTP conversation, held from a throwaway container attached to
         # exim-relay's own container network - which is how actual consumers of
@@ -123,7 +132,7 @@
         - name: Show the exim-relay verification summary
           ansible.builtin.debug:
             msg:
-              - "exim-relay systemd: {{ exim_relay_service.status.ActiveState }}"
+              - "exim-relay systemd: {% for unit, state in exim_relay_verify_units | zip(exim_relay_services.results | map(attribute='status.ActiveState')) %}{{ unit }} ({{ state }}){% if not loop.last %}, {% endif %}{% endfor %}"
               - "exim-relay SMTP banner: {{ exim_relay_smtp_conversation.stdout_lines[0] }}"
               - "exim-relay SMTP session lines: {{ exim_relay_smtp_conversation.stdout_lines | length }}"
 
