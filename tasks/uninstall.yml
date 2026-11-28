@@ -24,7 +24,7 @@
         state: absent
 
     - name: Ensure exim-relay container network does not exist
-      when: exim_relay_container_network_deletion_enabled
+      when: exim_relay_container_network_deletion_enabled and exim_relay_container_network != 'host'
       block:
         - name: Ensure exim-relay container network does not exist via community.docker.docker_network
           when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
